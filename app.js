@@ -19,7 +19,7 @@ const fastify = Fastify({
 })
 
 // register helmet plugin to set security headers
-fastify.register(FastifyHelmet)
+fastify.register(FastifyHelmet, { contentSecurityPolicy: false })
 
 // register under pressure plugin to get a EP that can be used for readiness and liveness probes
 fastify.register(FastifyUnderPressure, {

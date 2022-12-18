@@ -18,7 +18,7 @@ WORKDIR /usr/src/app
 COPY --chown=node:node --from=libraries /usr/src/app/node_modules /usr/src/app/node_modules
 COPY --chown=node:node --from=build /openmct/dist/ /usr/src/app/public/
 COPY --chown=node:node app.js .
-
+VOLUME [ "/usr/src/app/public/plugins" ]
 EXPOSE 3000
 HEALTHCHECK NONE
 CMD ["dumb-init", "node", "app.js"]

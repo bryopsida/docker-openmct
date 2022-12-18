@@ -5,6 +5,14 @@ const FastifyHelmet = require('@fastify/helmet')
 const FastifyCaching = require('@fastify/caching')
 const path = require('node:path')
 const fs = require('node:fs/promises')
+const { JSDOM } = require("jsdom");
+
+
+const INDEX_CACHE = {}
+const INDEX_HTML = path.resolve('./public/index.html')
+const PLUGIN_DIR = path.resolve('./public/plugins/')
+const INDEX_CACHE_KEY = 'index.html'
+const UTF8 = 'utf8'
 
 const fastify = Fastify({
   logger: true
@@ -20,15 +28,15 @@ fastify.register(FastifyUnderPressure, {
 })
 fastify.register(FastifyCaching)
 
-const INDEX_CACHE = {}
+
 
 function returnUnmodifiedIndex(req, reply) {
   req.log.info('Returning unmodified index.html')
-  fs.readFile(path.resolve('./public/index.html'), {
-    encoding: 'utf8'
+  fs.readFile(INDEX_HTML, {
+    encoding: UTF8
   }).then((file) => {
     reply.header('Content-Type', 'text/html')
-    INDEX_CACHE['index.html'] = file
+    INDEX_CACHE[INDEX_CACHE_KEY] = file
     reply.send(file)
   }).catch((err) => {
     req.log.error(`Error occurred while reading index.html file: ${err}`)
@@ -37,40 +45,64 @@ function returnUnmodifiedIndex(req, reply) {
 }
 
 function fetchIndexHtml() {
-  return fs.readFile(path.resolve('./public/index.html'))
+  return fs.readFile(INDEX_HTML, {
+    encoding: UTF8
+  })
 }
 
-function buildDom(fileBuffer) {
-
+function buildDom(indexHtml) {
+  return Promise.resolve(new JSDOM(indexHtml))
 }
 
-function injectPluginScripts(dom) {
-
+async function injectPluginScripts(dom) {
+  this.log.info('Injecting plugin scripts')
+  const pluginScripts = await fs.readdir(PLUGIN_DIR)
+  this.log.info(`Detected ${pluginScripts.length} plugins`)
+  const head = dom.window.document.querySelector('head')
+  for ( const plugin of pluginScripts) {
+    this.log.info(`Loading plugin ${plugin}`)
+    const element = dom.window.document.createElement('script')
+    element.src = `/plugins/${plugin}`
+    head.append(element)
+  }
+  return Promise.resolve(dom)
 }
 
-function injectPluginLoader(dom) {
-
+async function injectPluginLoader(dom) {
+  const loaderPath = process.env.OPENMCT_PLUGIN_LOADER_SCRIPT
+  this.log.info(`Injecting loader script ${loaderPath}`)
+  const scriptContents = await fs.readFile(path.resolve(loaderPath), {
+    encoding: UTF8
+  })
+  const body = dom.window.document.querySelector('body')
+  const scriptEle = dom.window.document.createElement('script')
+  scriptEle.innerHTML = scriptContents
+  body.append(scriptEle)
+  return Promise.resolve(dom)
 }
 
 
 function cacheIndex(dom) {
-
+  INDEX_CACHE[INDEX_CACHE_KEY] = dom.serialize()
+  return Promise.resolve(INDEX_CACHE[INDEX_CACHE_KEY])
 }
 
 function replyWithModifiedIndex(req, reply, dom) {
-
+  req.log.info('Returning modified and serialized index.html')
+  reply.header('Content-Type', 'text/html')
+  reply.send(dom)
 }
 
 function returnCachedIndex(req, reply) {
   req.log.info('Returning cached index.html')
   reply.header('Content-Type', 'text/html')
-  reply.send(INDEX_CACHE['index.html'])
+  reply.send(INDEX_CACHE[INDEX_CACHE_KEY])
 }
 
 
 function indexRequest(req, reply) {
   // if we have a cached result return that
-  if (INDEX_CACHE['index.html'] != null) return returnCachedIndex.bind(this)(req, reply)
+  if (INDEX_CACHE[INDEX_CACHE_KEY] != null) return returnCachedIndex.bind(this)(req, reply)
 
   // if we don't have a env var return unmodified index
   if (process.env.OPENMCT_PLUGIN_LOADER_SCRIPT == null) return returnUnmodifiedIndex.bind(this)(req, reply)
@@ -81,10 +113,10 @@ function indexRequest(req, reply) {
     .then(injectPluginLoader.bind(this))
     .then(cacheIndex.bind(this))
     .then((dom) => {
-      return replyWithModifiedIndex(dom, req, reply)
+      return replyWithModifiedIndex(req, reply, dom)
     })
     .catch((err) => {
-      this.logger.error(`Error occurred while building index.html response: ${err}`)
+      req.log.error(`Error occurred while building index.html response: ${err}`)
       reply.code(500)
     })
 }

@@ -1,0 +1,14 @@
+services:
+  openmct:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      tags:
+        - ghcr.io/bryopsida/openmct:local
+    environment:
+      - OPENMCT_PLUGIN_LOADER_SCRIPT=/usr/src/app/loaders/loader-script.js
+    ports:
+      - 3000:3000
+    volumes:
+      - './plugins:/usr/src/app/public/plugins'
+      - './loaders/loader-ct.js:/usr/src/app/loaders/loader-script.js'

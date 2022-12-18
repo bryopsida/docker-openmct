@@ -5,8 +5,7 @@ const FastifyHelmet = require('@fastify/helmet')
 const FastifyCaching = require('@fastify/caching')
 const path = require('node:path')
 const fs = require('node:fs/promises')
-const { JSDOM } = require("jsdom");
-
+const { JSDOM } = require('jsdom')
 
 const INDEX_CACHE = {}
 const INDEX_HTML = path.resolve('./public/index.html')
@@ -28,9 +27,7 @@ fastify.register(FastifyUnderPressure, {
 })
 fastify.register(FastifyCaching)
 
-
-
-function returnUnmodifiedIndex(req, reply) {
+function returnUnmodifiedIndex (req, reply) {
   req.log.info('Returning unmodified index.html')
   fs.readFile(INDEX_HTML, {
     encoding: UTF8
@@ -44,22 +41,22 @@ function returnUnmodifiedIndex(req, reply) {
   })
 }
 
-function fetchIndexHtml() {
+function fetchIndexHtml () {
   return fs.readFile(INDEX_HTML, {
     encoding: UTF8
   })
 }
 
-function buildDom(indexHtml) {
+function buildDom (indexHtml) {
   return Promise.resolve(new JSDOM(indexHtml))
 }
 
-async function injectPluginScripts(dom) {
+async function injectPluginScripts (dom) {
   this.log.info('Injecting plugin scripts')
   const pluginScripts = await fs.readdir(PLUGIN_DIR)
   this.log.info(`Detected ${pluginScripts.length} plugins`)
   const head = dom.window.document.querySelector('head')
-  for ( const plugin of pluginScripts) {
+  for (const plugin of pluginScripts) {
     this.log.info(`Loading plugin ${plugin}`)
     const element = dom.window.document.createElement('script')
     element.src = `/plugins/${plugin}`
@@ -68,7 +65,7 @@ async function injectPluginScripts(dom) {
   return Promise.resolve(dom)
 }
 
-async function injectPluginLoader(dom) {
+async function injectPluginLoader (dom) {
   const loaderPath = process.env.OPENMCT_PLUGIN_LOADER_SCRIPT
   this.log.info(`Injecting loader script ${loaderPath}`)
   const scriptContents = await fs.readFile(path.resolve(loaderPath), {
@@ -81,26 +78,24 @@ async function injectPluginLoader(dom) {
   return Promise.resolve(dom)
 }
 
-
-function cacheIndex(dom) {
+function cacheIndex (dom) {
   INDEX_CACHE[INDEX_CACHE_KEY] = dom.serialize()
   return Promise.resolve(INDEX_CACHE[INDEX_CACHE_KEY])
 }
 
-function replyWithModifiedIndex(req, reply, dom) {
+function replyWithModifiedIndex (req, reply, dom) {
   req.log.info('Returning modified and serialized index.html')
   reply.header('Content-Type', 'text/html')
   reply.send(dom)
 }
 
-function returnCachedIndex(req, reply) {
+function returnCachedIndex (req, reply) {
   req.log.info('Returning cached index.html')
   reply.header('Content-Type', 'text/html')
   reply.send(INDEX_CACHE[INDEX_CACHE_KEY])
 }
 
-
-function indexRequest(req, reply) {
+function indexRequest (req, reply) {
   // if we have a cached result return that
   if (INDEX_CACHE[INDEX_CACHE_KEY] != null) return returnCachedIndex.bind(this)(req, reply)
 
@@ -125,12 +120,12 @@ function indexRequest(req, reply) {
     })
 }
 
-fastify.get("/", indexRequest);
-fastify.get("/index.html", indexRequest);
-fastify.get("/index.htm", indexRequest);
+fastify.get('/', indexRequest)
+fastify.get('/index.html', indexRequest)
+fastify.get('/index.htm', indexRequest)
 
 fastify.register(FastifyStatic, {
-  root: path.join(__dirname, 'public'),
+  root: path.join(__dirname, 'public')
 })
 
 // Run the server!

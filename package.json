@@ -27,5 +27,11 @@
   },
   "devDependencies": {
     "standard": "^17.0.0"
+  },
+  "standard": {
+    "ignore": [
+      "plugins/plugin-ct.js",
+      "loaders/loader-ct.js"
+    ]
   }
 }

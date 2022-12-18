@@ -18,7 +18,7 @@ const fastify = Fastify({
   logger: true
 })
 
-//fastify.register(FastifyHelmet)
+fastify.register(FastifyHelmet)
 fastify.register(FastifyUnderPressure, {
   maxEventLoopDelay: process.env.FASTIFY_MAX_EVENT_LOOP_DELAY || 1000,
   maxHeapUsedBytes: process.env.FASTIFY_MAX_HEAP_BYTES || 100000000,

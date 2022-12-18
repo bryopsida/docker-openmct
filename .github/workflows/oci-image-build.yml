@@ -10,9 +10,20 @@ on:
     branches:
       - main
 jobs:
+  lint:
+    name: 'Lint'
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node
+        with:
+          node-version: 18
+      - run: npm ci && npm lint
   build:
     name: 'OCI'
     uses: curium-rocks/flows/.github/workflows/oci-build-image.yml@main
+    needs:
+      - lint
     with:
       registry: ghcr.io/bryopsida
       image_name: openmct

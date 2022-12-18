@@ -1,0 +1,23 @@
+{
+  "name": "docker-openmct",
+  "version": "0.1.0",
+  "description": "A dockerized instance of OpenMCT",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bryopsida/docker-openmct.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bryopsida/docker-openmct/issues"
+  },
+  "homepage": "https://github.com/bryopsida/docker-openmct#readme",
+  "dependencies": {
+    "@fastify/static": "^6.6.0",
+    "fastify": "^4.10.2"
+  }
+}

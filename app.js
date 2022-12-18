@@ -117,7 +117,11 @@ function indexRequest(req, reply) {
     })
     .catch((err) => {
       req.log.error(`Error occurred while building index.html response: ${err}`)
-      reply.code(500)
+      // try to return the unmodified index in a best effort
+      return returnUnmodifiedIndex(req, reply).catch((err) => {
+        req.log.error(`Error occurred while sending unmodified index.htmlin catch handler: ${err}`)
+        reply.code(500)
+      })
     })
 }
 

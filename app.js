@@ -4,7 +4,7 @@ const FastifyUnderPressure = require('@fastify/under-pressure')
 const FastifyHelmet = require('@fastify/helmet')
 const FastifyCaching = require('@fastify/caching')
 const path = require('node:path')
-const fs = require('node:fs')
+const fs = require('node:fs/promises')
 
 const fastify = Fastify({
   logger: true
@@ -24,24 +24,54 @@ const INDEX_CACHE = {
 
 }
 
-function indexRequest(req, reply) {
-  // we need to be able to programatically inject another loader script into the index page
-  // without this we cannot extend and load additional plugins
-  // we will check for an env var pointing to a loader script location and inject it as a inline script
-  // after the main script block, we will use JSDOM to do this
-  // the containers are expected to be immutable except for the plugin directory, we will cache the result in memory
+function returnUnmodifiedIndex(req, reply) {
+  
+}
 
-  // step 1 check env var
-  // if no env set, pipe the default file as a return
-  // if env is set continue
-  // step 2 load default index.html and parse with jsdom
-  // step 3 load script referenced by env var
-  //   if script doesn't exist log error and return default content
-  // step 4 query index.html and find last script element
-  //   if locating script element fails log error and return default content
-  // step 5 inject the script contents after the last script element
-  // step 6 cache result
-  // step 7 return reply
+function fetchIndexHtml() {
+  return fs.readFile(path.resolve('./public/index.html'))
+}
+
+function buildDom(fileBuffer) {
+
+}
+
+function injectPluginScripts(dom) {
+
+}
+
+function injectPluginLoader(dom) {
+
+}
+
+
+function cacheIndex(dom) {
+
+}
+
+function replyWithModifiedIndex(req, reply, dom) {
+  
+}
+
+
+function indexRequest(req, reply) {
+  // if we don't have a env var return unmodified index
+  if (process.env.OPENMCT_PLUGIN_LOADER_SCRIPT == null) return returnUnmodifiedIndex(req, reply).bind(this)
+
+  // if we have a cached result return that
+  if (INDEX_CACHE['index.html'] != null) return returnCachedIndex(req, reply).bind(this)
+
+  return fetchIndexHtml.bind(this)()
+    .then(buildDom.bind(this))
+    .then(injectPluginScripts.bind(this))
+    .then(injectPluginLoader.bind(this))
+    .then(cacheIndex.bind(this))
+    .then((dom) => {
+      return replyWithModifiedIndex(dom, req, reply)
+    })
+    .catch((err) => {
+
+    })
 }
 
 fastify.get("/", indexRequest);

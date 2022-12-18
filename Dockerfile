@@ -22,8 +22,8 @@ COPY --chown=node:node app.js .
 
 VOLUME [ "/usr/src/app/public/plugins" ]
 VOLUME [ "/usr/src/app/loaders" ]
-COPY --chown=node:node loader-ct.js ./loaders/
-COPY --chown=node:node plugin-ct.js ./public/plugins/
+COPY --chown=node:node loaders/loader-ct.js ./loaders/
+COPY --chown=node:node plugins/plugin-ct.js ./public/plugins/
 
 EXPOSE 3000
 HEALTHCHECK NONE

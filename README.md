@@ -4,7 +4,7 @@ This is a multi platform docker build for running a containerized version of NAS
 It's using fastify and an alpine base to serve up OpenMCT. It's building against tag 2.1.3 and pulls in base patches nightly.
 
 ## How to run?
-You can run the container with `docker run -p 3000:3000 ghcr.io/bryopsida/openmct:main`, you'll be able to access the site at http://localhost:3000/
+You can run the container with `docker run -p 3000:3000 ghcr.io/bryopsida/openmct:main`, you'll be able to access the site at http://localhost:3000/, you can also run `docker-compose up` to leverage the docker-compose and a local build. 
 
 
 ## How to customize?
@@ -25,7 +25,7 @@ docker run -p 3000:3000 \
   -e OPENMCT_PLUGIN_LOADER_SCRIPT=/usr/src/app/loader-script.js \
   ghcr.io/bryopsida/openmct:main
 ```
-
+You can also take a look at the [docker-compose](./docker-compose.yml) file.
 
 ## Future Ideas
 - [ ] Support EJB or Handlebar templating in user provided scripts

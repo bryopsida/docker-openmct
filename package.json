@@ -18,6 +18,7 @@
   "homepage": "https://github.com/bryopsida/docker-openmct#readme",
   "dependencies": {
     "@fastify/static": "^6.6.0",
+    "@fastify/under-pressure": "^8.2.0",
     "fastify": "^4.10.2"
   }
 }

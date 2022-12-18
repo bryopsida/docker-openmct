@@ -4,7 +4,8 @@
   "description": "A dockerized instance of OpenMCT",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "standard",
+    "lint:fix": "standard --fix"
   },
   "repository": {
     "type": "git",
@@ -23,5 +24,14 @@
     "@fastify/under-pressure": "^8.2.0",
     "fastify": "^4.10.2",
     "jsdom": "^20.0.3"
+  },
+  "devDependencies": {
+    "standard": "^17.0.0"
+  },
+  "standard": {
+    "ignore": [
+      "plugins/plugin-ct.js",
+      "loaders/loader-ct.js"
+    ]
   }
 }

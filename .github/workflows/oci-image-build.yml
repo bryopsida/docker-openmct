@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - run: npm ci && npm lint
+      - run: npm ci && npm run lint
   build:
     name: 'OCI'
     uses: curium-rocks/flows/.github/workflows/oci-build-image.yml@main

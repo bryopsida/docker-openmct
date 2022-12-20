@@ -2,7 +2,7 @@ FROM node:lts-alpine AS base
 
 FROM base AS build
 RUN apk add --no-cache git
-RUN git clone https://github.com/nasa/openmct.git && cd openmct && git checkout v2.1.3 && npm install
+RUN git clone https://github.com/nasa/openmct.git && cd openmct && git checkout v2.1.4 && npm install
 
 FROM base AS libraries
 WORKDIR /usr/src/app

@@ -24,6 +24,11 @@ jobs:
     uses: curium-rocks/flows/.github/workflows/oci-build-image.yml@main
     needs:
       - lint
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+      id-token: write
     with:
       registry: ghcr.io/bryopsida
       image_name: openmct

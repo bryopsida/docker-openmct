@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS base
+FROM node:18-alpine AS base
 
 FROM base AS build
 RUN apk add --no-cache git

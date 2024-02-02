@@ -23,7 +23,7 @@
     "@fastify/static": "^7.0.0",
     "@fastify/under-pressure": "^8.2.0",
     "fastify": "^4.17.0",
-    "jsdom": "^22.0.0"
+    "jsdom": "^24.0.0"
   },
   "devDependencies": {
     "standard": "^17.0.0"

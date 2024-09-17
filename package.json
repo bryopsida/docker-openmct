@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/bryopsida/docker-openmct#readme",
   "dependencies": {
-    "@fastify/caching": "^8.2.0",
+    "@fastify/caching": "^9.0.0",
     "@fastify/helmet": "^11.0.0",
     "@fastify/static": "^7.0.4",
     "@fastify/under-pressure": "^8.5.0",
